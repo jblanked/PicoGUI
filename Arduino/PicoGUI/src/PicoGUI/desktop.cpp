@@ -42,7 +42,7 @@ namespace PicoGUI
     void Desktop::drawHeader()
     {
         // draw header
-        display->text(Vector(2, 0), boardName, textColor);
+        display->text(Vector(2, 2), boardName, textColor);
 
         // draw WiFi icon if available
         if (hasWiFi)
