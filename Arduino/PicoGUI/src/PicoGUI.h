@@ -15,5 +15,6 @@ Created: 2025-04-29
 #include "PicoGUI/textbox.h"
 #include "PicoGUI/list.h"
 #include "PicoGUI/loading.h"
+#include "PicoGUI/menu.h"
 
 using namespace PicoGUI;
