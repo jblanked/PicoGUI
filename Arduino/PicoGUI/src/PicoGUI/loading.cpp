@@ -23,6 +23,7 @@ namespace PicoGUI
         display->text(Vector(130, 20), currentText, spinnerColor);
         timeElapsed = millis() - timeStart;
         spinnerPosition = (spinnerPosition + 10) % 360; // Rotate by 10 degrees each frame
+        display->swap();
     }
 
     void Loading::clear()
@@ -37,6 +38,7 @@ namespace PicoGUI
     void Loading::stop()
     {
         clear();
+        display->swap();
         animating = false;
         timeElapsed = 0;
         timeStart = 0;

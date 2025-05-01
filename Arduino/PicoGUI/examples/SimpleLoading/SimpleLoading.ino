@@ -2,10 +2,13 @@
 PicoGUI::Board board = VGMConfig; // VGMConfig, PicoCalcConfigPico, PicoCalcConfigPicoW, PicoCalcConfigPico2, PicoCalcConfigPico2W
 Draw *draw;
 Loading *loading;
-static void clear() { draw->clear(Vector(0, 0), Vector(board.width, board.height), TFT_WHITE); }
 void setup()
 {
-    draw = new Draw(board, false); // Initialize the Draw class in 16-bit mode
+    draw = new Draw(
+        board, // Board configuration
+        true,  // Use 8-bit?
+        true   // Use double buffering?
+    );
     loading = new Loading(
         draw,      // draw instance
         TFT_BLACK, // spinner color

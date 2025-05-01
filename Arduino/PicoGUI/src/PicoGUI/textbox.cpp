@@ -37,6 +37,7 @@ namespace PicoGUI
         totalLines = 0;
         setScrollBarSize();
         setScrollBarPosition();
+        this->display->swap();
     }
 
     void TextBox::setCurrentLine(uint32_t line)
@@ -45,11 +46,13 @@ namespace PicoGUI
             return;
 
         currentLine = line;
-        this->setText(currentText); // Re-render the text to shift the display
+        this->setText(currentText);
     }
 
     void TextBox::setText(const char *text)
     {
+        display->clear(position, size, backgroundColor);
+        scrollBar->clear();
         this->currentText = text;
         Vector cursorPos = Vector(position.x + 1, position.y + 1); // 1 pixel padding
         auto len = strlen(text);
@@ -256,6 +259,7 @@ namespace PicoGUI
         setScrollBarSize();
         setScrollBarPosition();
         scrollBar->draw();
+        this->display->swap();
     }
 
     void TextBox::setForegroundColor(uint16_t color)

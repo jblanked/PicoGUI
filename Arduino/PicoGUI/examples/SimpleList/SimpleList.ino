@@ -2,10 +2,13 @@
 PicoGUI::Board board = VGMConfig; // VGMConfig, PicoCalcConfigPico, PicoCalcConfigPicoW, PicoCalcConfigPico2, PicoCalcConfigPico2W
 Draw *draw;
 List *list;
-static void clear() { draw->clear(Vector(0, 0), Vector(board.width, board.height), TFT_WHITE); }
 void setup()
 {
-    draw = new Draw(board, false); // Initialize the Draw class in 16-bit mode
+    draw = new Draw(
+        board, // Board configuration
+        true,  // Use 8-bit?
+        true   // Use double buffering?
+    );
     list = new List(
         draw,         // draw instance
         0,            // y
@@ -41,13 +44,11 @@ void loop()
 {
     for (int i = 0; i < 18; i++)
     {
-        clear();
         list->setSelected(i);
         delay(1000);
     }
     for (int i = 16; i > 0; i--)
     {
-        clear();
         list->setSelected(i);
         delay(1000);
     }

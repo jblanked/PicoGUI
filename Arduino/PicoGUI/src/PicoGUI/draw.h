@@ -21,7 +21,7 @@ namespace PicoGUI
         class DisplayAdapter
         {
         public:
-                DisplayAdapter(Board board, bool use_8bit = false);
+                DisplayAdapter(Board board, bool use_8bit = true, bool tftDoubleBuffer = true); // Constructor for the DisplayAdapter class. Initializes the display based on the board type and whether to use 8-bit or 16-bit color depth.
                 ~DisplayAdapter();
                 bool begin();                                                                                                             // Initializes the display.
                 void drawBitmap(int16_t x, int16_t y, const uint8_t *bitmap, int16_t w, int16_t h, uint16_t color);                       // Draws a bitmap on the display at the specified position with the specified color.
@@ -44,19 +44,20 @@ namespace PicoGUI
                 void setFont(int font = 2);                                                                                               // Sets the font for text rendering.
                 void setTextSize(uint8_t size = 1);                                                                                       // Sets the text size for rendering.
                 void setTextColor(uint16_t color = TFT_WHITE);                                                                            // Sets the text color for rendering.
-                void swap(bool copy_framebuffer = false, bool copy_palette = false);                                                      // Swaps the display buffer.
+                void swap(bool copyFrameBuffer = false, bool copyPalette = false);                                                        // Swaps the display buffer.
         private:
-                DVIGFX16 *display16;  // Invoke PicoDVI 16-bit library
-                DVIGFX8 *display8;    // Invoke PicoDVI 8-bit libraru
-                TFT_eSPI *displayTFT; // Invoke TFT SPI library
-                Board picoBoard;      // Board configuration
+                DVIGFX16 *display16;    // Invoke PicoDVI 16-bit library
+                DVIGFX8 *display8;      // Invoke PicoDVI 8-bit libraru
+                TFT_eSPI *displayTFT;   // Invoke TFT SPI library
+                TFT_eSprite *canvasTFT; // Off-screen buffer (“sprite”)
+                Board picoBoard;        // Board configuration
         };
 
         // The Draw class is used to draw images and text on the display.
         class Draw
         {
         public:
-                Draw(Board board, bool use_8bit = false);
+                Draw(Board board, bool use_8bit = false, bool tftDoubleBuffer = false);
                 ~Draw();
                 void background(uint16_t color);                                            // Sets the background color of the display.
                 void clear(Vector position, Vector size, uint16_t color);                   // Clears the display at the specified position and size with the specified color.
@@ -68,16 +69,19 @@ namespace PicoGUI
                 Vector getCursor();                                                         // Returns the current cursor position.
                 Vector getSize() { return size; }                                           // Returns the size of the display.
                 bool is8bit() { return is_8bit; }                                           // Returns true if the display is 8-bit, false otherwise.
+                bool isDoubleBuffered() { return is_DoubleBuffered; }                       // Returns true if double buffering is used, false otherwise.
                 void image(Vector position, const uint8_t *bitmap, Vector size);            // Draws a bitmap on the display at the specified position.
                 void setFont(int font = 2);                                                 // Sets the font for text rendering.
+                void swap(bool copyFrameBuffer = false, bool copyPalette = false);          // Swaps the display buffer (for double buffering).
                 void text(Vector position, const char text);                                // Draws one character on the display at the specified position.
                 void text(Vector position, const char text, uint16_t color);                // Draws one character on the display at the specified position with the specified color.
                 void text(Vector position, const char *text);                               // Draws text on the display at the specified position.
                 void text(Vector position, const char *text, uint16_t color, int font = 2); // Draws text on the display at the specified position with the specified font and color.
                 DisplayAdapter *display;                                                    // Invoke custom library
         private:
-                Vector size;     // The size of the display.
-                bool is_8bit;    // Flag to indicate if the display is 8-bit or not
-                Board picoBoard; // Board configuration
+                Vector size;            // The size of the display.
+                bool is_8bit;           // Flag to indicate if the display is 8-bit or not
+                bool is_DoubleBuffered; // Flag to indicate if double buffering is used
+                Board picoBoard;        // Board configuration
         };
 }

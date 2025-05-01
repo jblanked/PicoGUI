@@ -60,10 +60,14 @@ namespace PicoGUI
 
         setScrollBarSize();
         setScrollBarPosition();
+
+        display->swap();
     }
 
     void List::draw()
     {
+        // Clear the display area
+        display->clear(position, size, backgroundColor);
 
         // Draw only visible items
         uint16_t displayed = 0;
@@ -77,6 +81,9 @@ namespace PicoGUI
         setScrollBarSize();
         setScrollBarPosition();
         scrollBar->draw();
+
+        // swap the display buffer
+        display->swap();
     }
 
     void List::addItem(const char *item)
