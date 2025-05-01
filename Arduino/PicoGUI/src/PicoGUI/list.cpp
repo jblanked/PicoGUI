@@ -40,6 +40,8 @@ namespace PicoGUI
 
         // Calculate visible item count based on available height and item height
         visibleItemCount = (size.y - 2 * borderWidth) / ITEM_HEIGHT;
+
+        this->display->swap();
     }
 
     List::~List()

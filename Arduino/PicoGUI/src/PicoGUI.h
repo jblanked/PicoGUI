@@ -16,5 +16,6 @@ Created: 2025-04-29
 #include "PicoGUI/list.h"
 #include "PicoGUI/loading.h"
 #include "PicoGUI/menu.h"
+#include "PicoGUI/desktop.h"
 
 using namespace PicoGUI;

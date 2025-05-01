@@ -62,6 +62,8 @@ namespace PicoGUI
         uint16_t width;
         uint16_t height;
         uint8_t rotation;
+        const char *name;
+        bool hasWiFi;
     } Board;
 
     static const Board VGMConfig = {
@@ -76,7 +78,9 @@ namespace PicoGUI
             .rst = 15},
         .width = 320,
         .height = 240,
-        .rotation = 0};
+        .rotation = 0,
+        .name = "Video Game Module",
+        .hasWiFi = false};
 
     static const Board PicoCalcConfigPico = {
         .boardType = BOARD_TYPE_PICO_CALC,
@@ -90,7 +94,9 @@ namespace PicoGUI
             .rst = 15},
         .width = 320,
         .height = 320,
-        .rotation = 0};
+        .rotation = 0,
+        .name = "PicoCalc - Pico",
+        .hasWiFi = false};
 
     static const Board PicoCalcConfigPicoW = {
         .boardType = BOARD_TYPE_PICO_CALC,
@@ -104,7 +110,9 @@ namespace PicoGUI
             .rst = 15},
         .width = 320,
         .height = 320,
-        .rotation = 0};
+        .rotation = 0,
+        .name = "PicoCalc - Pico W",
+        .hasWiFi = true};
 
     static const Board PicoCalcConfigPico2 = {
         .boardType = BOARD_TYPE_PICO_CALC,
@@ -118,7 +126,9 @@ namespace PicoGUI
             .rst = 15},
         .width = 320,
         .height = 320,
-        .rotation = 0};
+        .rotation = 0,
+        .name = "PicoCalc - Pico 2",
+        .hasWiFi = false};
 
     static const Board PicoCalcConfigPico2W = {
         .boardType = BOARD_TYPE_PICO_CALC,
@@ -132,6 +142,8 @@ namespace PicoGUI
             .rst = 15},
         .width = 320,
         .height = 320,
-        .rotation = 0};
+        .rotation = 0,
+        .name = "PicoCalc - Pico 2 W",
+        .hasWiFi = true};
 
 };

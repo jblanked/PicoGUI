@@ -19,7 +19,7 @@ namespace PicoGUI
         list = new List(draw, y + 20, height - 20, textColor, backgroundColor, selectedColor, borderColor, borderWidth);
         this->position = Vector(0, y);
         this->size = Vector(draw->getSize().x, height);
-        this->display->clear(position, size, TFT_WHITE);
+        this->display->clear(position, size, backgroundColor);
         this->display->swap();
     }
 
@@ -35,7 +35,7 @@ namespace PicoGUI
 
     void Menu::draw()
     {
-        display->clear(position, size, TFT_WHITE);
+        display->clear(position, size, backgroundColor);
         drawTitle();
         list->draw();
     }

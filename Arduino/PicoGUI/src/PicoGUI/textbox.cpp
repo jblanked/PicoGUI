@@ -23,6 +23,7 @@ namespace PicoGUI
             charactersPerLine = 52; // width is 320
             linesPerScreen = 26;    // height is 320
         }
+        this->display->swap();
     }
 
     TextBox::~TextBox()
