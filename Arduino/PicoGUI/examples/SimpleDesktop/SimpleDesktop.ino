@@ -1,6 +1,6 @@
 #include "PicoGUI.h"
 #include "frames.h"
-PicoGUI::Board board = PicoCalcConfigPicoW; // VGMConfig, PicoCalcConfigPico, PicoCalcConfigPicoW, PicoCalcConfigPico2, PicoCalcConfigPico2W
+PicoGUI::Board board = VGMConfig; // VGMConfig, PicoCalcConfigPico, PicoCalcConfigPicoW, PicoCalcConfigPico2, PicoCalcConfigPico2W
 Draw *draw;
 Desktop *desktop;
 int next_frame = 1;
@@ -33,4 +33,5 @@ void loop()
     {
         direction = 1;
     }
+    delay(1000 / 4); // 4 frames per second
 }
