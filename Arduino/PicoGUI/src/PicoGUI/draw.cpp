@@ -299,6 +299,32 @@ namespace PicoGUI
         }
     }
 
+    void DisplayAdapter::fillCircle(int16_t x, int16_t y, int16_t r, uint16_t color)
+    {
+        if (!this->useTFT)
+        {
+            if (this->display8 != nullptr)
+            {
+                this->display8->fillCircle(x, y, r, color);
+            }
+            else
+            {
+                this->display16->fillCircle(x, y, r, color);
+            }
+        }
+        else
+        {
+            if (this->canvasTFT == nullptr)
+            {
+                this->displayTFT->fillCircle(x, y, r, color);
+            }
+            else
+            {
+                this->canvasTFT->fillCircle(x, y, r, color);
+            }
+        }
+    }
+
     void DisplayAdapter::fillScreen(uint16_t color)
     {
         if (!this->useTFT)
@@ -707,13 +733,14 @@ namespace PicoGUI
         return this->display->getPalette();
     }
 
-    void Draw::image(Vector position, const uint8_t *bitmap, Vector size, const uint16_t *palette)
+    void Draw::image(Vector position, const uint8_t *bitmap, Vector size, const uint16_t *palette, bool imageCheck)
     {
-        if (bitmap != nullptr &&
-            position.x < this->size.x &&
-            position.y < this->size.y &&
-            size.x > 0 &&
-            size.y > 0)
+        if (!imageCheck || (imageCheck &&
+                            bitmap != nullptr &&
+                            position.x < this->size.x &&
+                            position.y < this->size.y &&
+                            size.x > 0 &&
+                            size.y > 0))
         {
             if (this->is_8bit)
             {
