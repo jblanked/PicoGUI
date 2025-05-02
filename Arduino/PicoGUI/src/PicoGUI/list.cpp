@@ -29,11 +29,11 @@ namespace PicoGUI
 
         // font is 2, textSize is 1
         auto board = display->getBoard();
-        if (board.boardType == BOARD_TYPE_VGM)
+        if (board.libraryType == LIBRARY_TYPE_TFT)
         {
             linesPerScreen = 20; // height is 240
         }
-        else if (board.boardType == BOARD_TYPE_PICO_CALC)
+        else
         {
             linesPerScreen = 26; // height is 320
         }

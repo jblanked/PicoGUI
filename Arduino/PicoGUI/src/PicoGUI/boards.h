@@ -33,7 +33,8 @@ namespace PicoGUI
     typedef enum
     {
         BOARD_TYPE_PICO_CALC = 0,
-        BOARD_TYPE_VGM = 1
+        BOARD_TYPE_VGM = 1,
+        BOARD_TYPE_JBLANKED = 2,
     } BoardType;
 
     typedef enum
@@ -43,6 +44,12 @@ namespace PicoGUI
         PICO_TYPE_PICO_2 = 2,  // Raspberry Pi Pico 2
         PICO_TYPE_PICO_2_W = 3 // Raspberry Pi Pico 2 W
     } PicoType;
+
+    typedef enum
+    {
+        LIBRARY_TYPE_PICO_DVI = 0,
+        LIBRARY_TYPE_TFT = 1
+    } LibraryType;
 
     typedef struct
     {
@@ -58,6 +65,7 @@ namespace PicoGUI
     {
         BoardType boardType;
         PicoType picoType;
+        LibraryType libraryType;
         BoardPins pins;
         uint16_t width;
         uint16_t height;
@@ -69,6 +77,7 @@ namespace PicoGUI
     static const Board VGMConfig = {
         .boardType = BOARD_TYPE_VGM,
         .picoType = PICO_TYPE_PICO,
+        .libraryType = LIBRARY_TYPE_PICO_DVI,
         .pins = {
             .sck = 8,
             .mosi = 11,
@@ -85,6 +94,7 @@ namespace PicoGUI
     static const Board PicoCalcConfigPico = {
         .boardType = BOARD_TYPE_PICO_CALC,
         .picoType = PICO_TYPE_PICO,
+        .libraryType = LIBRARY_TYPE_TFT,
         .pins = {
             .sck = 10,
             .mosi = 11,
@@ -101,6 +111,7 @@ namespace PicoGUI
     static const Board PicoCalcConfigPicoW = {
         .boardType = BOARD_TYPE_PICO_CALC,
         .picoType = PICO_TYPE_PICO_W,
+        .libraryType = LIBRARY_TYPE_TFT,
         .pins = {
             .sck = 10,
             .mosi = 11,
@@ -117,6 +128,7 @@ namespace PicoGUI
     static const Board PicoCalcConfigPico2 = {
         .boardType = BOARD_TYPE_PICO_CALC,
         .picoType = PICO_TYPE_PICO_2,
+        .libraryType = LIBRARY_TYPE_TFT,
         .pins = {
             .sck = 10,
             .mosi = 11,
@@ -133,6 +145,7 @@ namespace PicoGUI
     static const Board PicoCalcConfigPico2W = {
         .boardType = BOARD_TYPE_PICO_CALC,
         .picoType = PICO_TYPE_PICO_2_W,
+        .libraryType = LIBRARY_TYPE_TFT,
         .pins = {
             .sck = 10,
             .mosi = 11,
@@ -144,6 +157,23 @@ namespace PicoGUI
         .height = 320,
         .rotation = 0,
         .name = "PicoCalc - Pico 2 W",
+        .hasWiFi = true};
+
+    static const Board JBlankedPicoConfig = {
+        .boardType = BOARD_TYPE_JBLANKED,
+        .picoType = PICO_TYPE_PICO_W,
+        .libraryType = LIBRARY_TYPE_TFT,
+        .pins = {
+            .sck = 6,
+            .mosi = 7,
+            .miso = 4,
+            .cs = 5,
+            .dc = 11,
+            .rst = 10},
+        .width = 320,
+        .height = 240,
+        .rotation = 3,
+        .name = "JBlanked Pico",
         .hasWiFi = true};
 
 };

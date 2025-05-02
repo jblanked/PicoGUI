@@ -51,6 +51,7 @@ namespace PicoGUI
                 TFT_eSPI *displayTFT;   // Invoke TFT SPI library
                 TFT_eSprite *canvasTFT; // Off-screen buffer (“sprite”)
                 Board picoBoard;        // Board configuration
+                bool useTFT;            // Flag to indicate if TFT is used
         };
 
         // The Draw class is used to draw images and text on the display.
@@ -84,5 +85,6 @@ namespace PicoGUI
                 bool is_8bit;           // Flag to indicate if the display is 8-bit or not
                 bool is_DoubleBuffered; // Flag to indicate if double buffering is used
                 Board picoBoard;        // Board configuration
+                bool useTFT;            // Flag to indicate if TFT is used
         };
 }

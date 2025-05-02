@@ -13,7 +13,7 @@ namespace PicoGUI
         scrollBar = new ScrollBar(display, Vector(0, 0), Vector(0, 0), foregroundColor, backgroundColor);
         // font is 2, textSize is 1
         auto board = display->getBoard();
-        if (board.boardType == BOARD_TYPE_VGM)
+        if (board.boardType == BOARD_TYPE_VGM || board.boardType == BOARD_TYPE_JBLANKED)
         {
             charactersPerLine = 52; // width is 320
             linesPerScreen = 20;    // height is 240
