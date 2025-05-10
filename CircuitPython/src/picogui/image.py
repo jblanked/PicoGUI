@@ -7,9 +7,7 @@ from adafruit_framebuf import (
     RGB565,
 )  # https://circuitpython.org/libraries - add to the /lib folder
 
-from .vector import (
-    Vector,
-)
+from .vector import Vector
 
 SEEK_CUR = 1
 

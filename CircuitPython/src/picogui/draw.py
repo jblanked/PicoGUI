@@ -25,15 +25,11 @@ from .boards import (
     BOARD_TYPE_VGM,
     BOARD_TYPE_PICO_CALC,
     BOARD_TYPE_JBLANKED,
-)  # https://github.com/jblanked/RaspberryPi/blob/main/Pico%20W/Libraries/CircuitPython/Board.py - add to the /lib folder
+)
 
-from .vector import (
-    Vector,
-)  # https://github.com/jblanked/RaspberryPi/blob/main/Pico%20W/Libraries/CircuitPython/Vector.py - add to the /lib folder
+from .vector import Vector
+from .image import Image
 
-from .image import (
-    Image,
-)  # https://github.com/jblanked/RaspberryPi/blob/main/Pico%20W/Libraries/CircuitPython/Image.py - add to the /lib folder
 
 TFT_WHITE = 0xFFFFFF
 TFT_BLACK = 0x000000
