@@ -19,10 +19,9 @@ class Vector:
         """Ensure the value is a Vector. If it's a tuple, convert it."""
         if isinstance(value, tuple):
             return cls(*value)
-        elif isinstance(value, cls):
+        if isinstance(value, cls):
             return value
-        else:
-            raise TypeError("Expected a tuple or a Vector.")
+        raise TypeError("Expected a tuple or a Vector.")
 
     def __add__(self, other):
         other = Vector.from_val(other)
