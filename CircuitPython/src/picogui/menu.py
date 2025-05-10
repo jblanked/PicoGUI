@@ -18,7 +18,6 @@ class Menu:
         border_color: int,
         border_width: int = 2,
     ):
-        self.display = draw
         self.text_color = text_color
         self.background_color = background_color
         self.title = title
@@ -34,8 +33,8 @@ class Menu:
         )
         self.position = Vector(0, y)
         self.size = Vector(draw.size.x, height)
-        self.display.clear(self.position, self.size, self.background_color)
-        self.display.swap()
+        draw.clear(self.position, self.size, self.background_color)
+        draw.swap()
 
     def add_item(self, item: str) -> None:
         """Add an item to the menu."""
@@ -47,16 +46,12 @@ class Menu:
 
     def draw(self) -> None:
         """Draw the menu."""
-        self.display.clear(self.position, self.size, self.background_color)
         self.draw_title()
         self.list.draw()
 
     def draw_title(self) -> None:
         '''Draw the title of the menu."""'''
-        self.display.clear(
-            Vector(0, 20), Vector(self.display.size.x, 20), self.background_color
-        )
-        self.display.text(Vector(2, 8), self.title, self.text_color, 1)
+        self.list.scrollbar.display.text(Vector(2, 8), self.title, self.text_color, 1)
 
     def get_current_item(self) -> str:
         """Get the current item in the menu."""

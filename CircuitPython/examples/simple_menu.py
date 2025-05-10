@@ -1,25 +1,35 @@
 import gc
-from picogui.boards import VGM_BOARD_CONFIG
-from picogui.draw import Draw
-from picogui.menu import Menu
 
 gc.collect()
+print(f"Starting... Heap Free: {gc.mem_free()}")
+
+from picogui.boards import VGM_BOARD_CONFIG
+from picogui.draw import Draw
 
 TFT_WHITE = 0xFFFFFF
 TFT_BLACK = 0x000000
 TFT_RED = 0x0000FF
 
+gc.collect()
+print(f"Loading draw... Heap Free: {gc.mem_free()}")
+
 
 # Initialize the display
 display = Draw(board_type=VGM_BOARD_CONFIG, palette_count=3, auto_swap=False)
 
-gc.collect()
-print(f"Draw init... Heap Free: {gc.mem_free()}")
 
 # Set up the palette
 display.set_palette(0, TFT_BLACK)
 display.set_palette(1, TFT_WHITE)
 display.set_palette(2, TFT_RED)
+
+gc.collect()
+print(f"Draw init... Heap Free: {gc.mem_free()}")
+
+from picogui.menu import Menu
+
+gc.collect()
+print(f"Menu imported... Heap Free: {gc.mem_free()}")
 
 # Initialize the menu
 menu_view = Menu(
@@ -59,7 +69,7 @@ print(f"Ready to go... Heap Free: {gc.mem_free()}")
 while True:
     for i in range(16):
         print(f"On item {i + 1}")
-        menu_view.set_selected(i)
+        menu_view.scroll_down()
     for i in range(14, 0, -1):
         print(f"On item {i + 1}")
-        menu_view.set_selected(i)
+        menu_view.scroll_up()

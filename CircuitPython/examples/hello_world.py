@@ -25,7 +25,7 @@ gc.collect()
 print("Free memory:", gc.mem_free())
 
 # Create the text box
-box = TextBox(display, 0, display.size.y, TFT_WHITE, TFT_BLACK)
+box = TextBox(display, 0, display.size.y, TFT_BLACK, TFT_WHITE)
 box.set_text(text)
 
 gc.collect()
@@ -33,7 +33,7 @@ print("Free memory:", gc.mem_free())
 
 # Demo scrolling - start at the top and scroll down
 sleep(1)  # Pause to see initial state
-for i in range(min(box.total_lines - 1, 7)):  # Limit number of scrolls
+for i in range(box.total_lines, 0, -1):  # Limit number of scrolls
     print(f"On line {i} now")
     box.set_current_line(i)  # scroll down to the next line
     sleep(0.5)
@@ -41,29 +41,17 @@ for i in range(min(box.total_lines - 1, 7)):  # Limit number of scrolls
 gc.collect()
 print("Free memory:", gc.mem_free())
 
-# Reduced loop iterations to conserve memory
-scroll_range = min(5, box.total_lines - 1)  # Limit scrolling range
-
 # Main loop with reduced iterations and memory usage
 while True:
     # Define starting line for scroll up
     start_line = min(box.current_line, box.total_lines - 1)
 
     # Scroll up
-    for i in range(scroll_range):
-        if start_line - i < 0:
-            break
-        print(f"On line {start_line - i} now")
-        box.set_current_line(start_line - i)
-        sleep(0.5)
-        gc.collect()  # Clean up after each scroll operation
+    for i in range(box.total_lines, 0, -1):
+        print(f"On line {i} now")
+        box.scroll_up()  # scroll up to the next line
 
     # Scroll down
-    current_line = box.current_line
-    for i in range(scroll_range):
-        if current_line + i >= box.total_lines:
-            break
-        print(f"On line {current_line + i} now")
-        box.set_current_line(current_line + i)
-        sleep(0.5)
-        gc.collect()  # Clean up after each scroll operation
+    for i in range(box.total_lines):
+        print(f"On line {i} now")
+        box.scroll_down()  # scroll down to the next line

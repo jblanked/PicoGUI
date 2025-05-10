@@ -25,8 +25,7 @@ class List:
         self.selected_color = selected_color
         self.border_color = border_color
         self.border_width = border_width
-        self.display = draw
-        self.display.clear(self.position, self.size, background_color)
+        draw.clear(self.position, self.size, background_color)
         self.scrollbar = ScrollBar(
             draw,
             Vector(0, 0),
@@ -44,7 +43,7 @@ class List:
         self.first_visible_index = 0
         self.visible_item_count = (self.size.y - 2 * border_width) / self.item_height
         self.items = []
-        self.display.swap()
+        draw.swap()
 
     def add_item(self, item: str, update_view: bool = False) -> None:
         """Add an item to the list and update the display."""
@@ -63,20 +62,17 @@ class List:
         self.first_visible_index = 0
 
         # Clear the display area
-        self.display.clear(self.position, self.size, self.background_color)
+        self.scrollbar.display.clear(self.position, self.size, self.background_color)
 
         self.set_scrollbar_size()
         self.set_scrollbar_position()
 
-        self.display.swap()
+        self.scrollbar.display.swap()
 
     def draw(self) -> None:
         """Draw the list."""
-        # Clear the display area
-        self.display.clear(self.position, self.size, self.background_color)
-
         # Clear previous text objects to prevent memory accumulation
-        self.display.clear_text_objects()
+        self.scrollbar.display.clear_text_objects(False)
 
         # Draw only visible items
         displayed = 0
@@ -86,15 +82,13 @@ class List:
             self.draw_item(i, i == self.selected_index)
             displayed += 1
 
-        del displayed
-
         # Draw the scrollbar
         self.set_scrollbar_size()
         self.set_scrollbar_position()
         self.scrollbar.draw()
 
         # swap the display buffer
-        self.display.swap()
+        self.scrollbar.display.swap()
         free()
 
     def draw_item(self, index: int, selected: bool) -> None:
@@ -105,19 +99,17 @@ class List:
 
         # Check if the item is within visible bounds
         if visible_index >= self.visible_item_count:
-            del visible_index
-            del y
             return
 
         # Draw item background
         if selected:
-            self.display.rect_fill(
+            self.scrollbar.display.rect_fill(
                 Vector(self.position.x + self.border_width, y),
                 Vector(self.size.x - 2 * self.border_width, self.item_height),
                 self.selected_color,
             )
         else:
-            self.display.rect_fill(
+            self.scrollbar.display.rect_fill(
                 Vector(self.position.x + self.border_width, y),
                 Vector(self.size.x - 2 * self.border_width, self.item_height),
                 self.background_color,
@@ -125,7 +117,7 @@ class List:
 
         # Draw line separator
         if self.border_width > 0:
-            self.display.line(
+            self.scrollbar.display.line(
                 Vector(self.position.x + self.border_width, y + self.item_height - 1),
                 Vector(
                     self.position.x + self.size.x - self.border_width - 1,
@@ -135,15 +127,11 @@ class List:
             )
 
         # Draw the item text
-        self.display.text(
+        self.scrollbar.display.text(
             Vector(self.position.x + self.border_width + 5, y + 5),
             self.items[int(index)],
             self.text_color,
         )
-
-        # cleanup
-        del y
-        del visible_index
 
     def get_current_item(self) -> str:
         """Get the currently selected item."""
@@ -183,15 +171,22 @@ class List:
         """Scroll the list down by one item."""
         if self.first_visible_index + self.visible_item_count < len(self.items):
             self.first_visible_index += 1
-            self.update_visibility()
-            self.draw()
+        if self.selected_index < len(self.items):
+            self.selected_index += 1
+        if self.selected_index >= len(self.items):
+            self.selected_index = len(self.items) - 1
+        self.update_visibility()
+        self.draw()
 
     def scroll_up(self) -> None:
         """Scroll the list up by one item."""
         if self.first_visible_index > 0:
             self.first_visible_index -= 1
-            self.update_visibility()
-            self.draw()
+        if self.selected_index > 0:
+            self.selected_index -= 1
+        self.selected_index = max(self.selected_index, 0)
+        self.update_visibility()
+        self.draw()
 
     def set_selected(self, index: int) -> None:
         """Set the selected item in the list"""
@@ -232,16 +227,7 @@ class List:
                     self.position.y + self.border_width + scroll_ratio * scrollable_area
                 )
 
-            del scroll_ratio
-            del max_first_visible
-
         self.scrollbar.position = Vector(bar_x, bar_y)
-
-        # cleanup
-        del view_height
-        del scrollable_area
-        del bar_x
-        del bar_y
 
     def set_scrollbar_size(self) -> None:
         '''Set the size of the scrollbar based on the list content and visible area."""'''
@@ -271,12 +257,6 @@ class List:
             bar_height = min(bar_height, view_height)
 
         self.scrollbar.size = Vector(bar_width, bar_height)
-
-        # cleanup
-        del content_height
-        del view_height
-        del bar_width
-        del bar_height
 
     def update_visibility(self) -> None:
         """Update the visibility of the list."""

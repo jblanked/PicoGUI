@@ -2,7 +2,15 @@ from gc import collect as free
 from terminalio import FONT
 from picodvi import Framebuffer
 from framebufferio import FramebufferDisplay
-import board, displayio
+import board
+from displayio import (
+    Bitmap,
+    Group,
+    OnDiskBitmap,
+    Palette,
+    TileGrid,
+    release_displays,
+)  # https://circuitpython.org/libraries - add to the /lib folder
 
 from adafruit_display_text.bitmap_label import (
     Label,
@@ -46,7 +54,7 @@ class Draw:
         """
 
         # Free up any existing displays and force garbage collection
-        displayio.release_displays()
+        release_displays()
         free()
 
         self.board = board_type
@@ -60,15 +68,15 @@ class Draw:
         self.fb_display = None
 
         # Initialize a minimal palette to save memory
-        self.palette = displayio.Palette(palette_count)
+        self.palette = Palette(palette_count)
         self.palette[0] = TFT_BLACK
         self.palette[1] = TFT_WHITE
         self.palette_count = palette_count
 
         # Create minimal display groups
-        self.bg_group = displayio.Group()
-        self.text_group = displayio.Group()
-        self.group = displayio.Group()
+        self.bg_group = Group()
+        self.text_group = Group()
+        self.group = Group()
         self.group.append(self.bg_group)
         self.group.append(self.text_group)
 
@@ -94,18 +102,14 @@ class Draw:
 
                 # Create single main bitmap instead of multiple copies
                 try:
-                    self.display = displayio.Bitmap(
-                        self.size.x, self.size.y, self.palette_count
-                    )
+                    self.display = Bitmap(self.size.x, self.size.y, self.palette_count)
                 except MemoryError as exc:
                     raise RuntimeError(
                         "[Draw:__init__]: Failed to allocate memory for display bitmap."
                     ) from exc
 
                 # Create one tile grid and reuse it
-                self.title_grid = displayio.TileGrid(
-                    self.display, pixel_shader=self.palette
-                )
+                self.title_grid = TileGrid(self.display, pixel_shader=self.palette)
                 self.bg_group.append(self.title_grid)
 
                 self.fb_display.root_group = self.group
@@ -197,7 +201,7 @@ class Draw:
 
         del x_start, y_start, x_end, y_end
 
-    def clear_text_objects(self):
+    def clear_text_objects(self, should_collect: bool = True):
         """Remove all text objects from the text_group to free up memory."""
         # Hide all current text objects by setting empty text
         for text_obj in self.text_objects:
@@ -212,7 +216,8 @@ class Draw:
             self.text_group.pop()
 
         # Force garbage collection
-        free()
+        if should_collect:
+            free()
 
     def deinit(self):
         """Deinitialize the display and free up resources."""
@@ -228,7 +233,7 @@ class Draw:
             self.frame_buffer.deinit()
             self.frame_buffer = None
 
-        displayio.release_displays()
+        release_displays()
         free()
 
     def fill(self, color: int):
@@ -260,10 +265,8 @@ class Draw:
             return
 
         try:
-            bitmap, palette = load_image(
-                filename, bitmap=displayio.Bitmap, palette=displayio.Palette
-            )
-            tile_grid = displayio.TileGrid(
+            bitmap, palette = load_image(filename, bitmap=Bitmap, palette=Palette)
+            tile_grid = TileGrid(
                 bitmap,
                 pixel_shader=palette,
                 x=int(position.x),
@@ -284,8 +287,8 @@ class Draw:
             return False
 
         try:
-            bitmap = displayio.OnDiskBitmap(filename)
-            tile_grid = displayio.TileGrid(
+            bitmap = OnDiskBitmap(filename)
+            tile_grid = TileGrid(
                 bitmap,
                 pixel_shader=bitmap.pixel_shader,
                 x=int(position.x),

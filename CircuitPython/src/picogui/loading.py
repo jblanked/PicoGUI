@@ -90,7 +90,7 @@ class Loading:
             x2 = center_x + int(radius * self._get_cos(next_angle))
             y2 = center_y + int(radius * self._get_sin(next_angle))
 
-            # Calculate fade color\
+            # Calculate fade color
             opacity = 255 - ((offset * 200) // span)
             color = self.fade_color(self.spinner_color, opacity)
 

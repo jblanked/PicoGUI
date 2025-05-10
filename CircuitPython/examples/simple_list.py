@@ -1,6 +1,5 @@
 from picogui.boards import VGM_BOARD_CONFIG
 from picogui.draw import Draw
-from picogui.list import List
 import gc
 
 gc.collect()
@@ -8,6 +7,9 @@ gc.collect()
 TFT_WHITE = 0xFFFFFF
 TFT_BLACK = 0x000000
 TFT_RED = 0x0000FF
+
+gc.collect()
+print(f"Getting ready... Heap Free: {gc.mem_free()}")
 
 
 # Initialize the display
@@ -20,6 +22,8 @@ print(f"Draw init... Heap Free: {gc.mem_free()}")
 display.set_palette(0, TFT_BLACK)
 display.set_palette(1, TFT_WHITE)
 display.set_palette(2, TFT_RED)
+
+from picogui.list import List
 
 # Initialize the list
 list_view = List(
@@ -59,7 +63,7 @@ print(f"Ready to go... Heap Free: {gc.mem_free()}")
 while True:
     for i in range(16):
         print(f"On item {i + 1}")
-        list_view.set_selected(i)
+        list_view.scroll_down()
     for i in range(14, 0, -1):
         print(f"On item {i + 1}")
-        list_view.set_selected(i)
+        list_view.scroll_up()
