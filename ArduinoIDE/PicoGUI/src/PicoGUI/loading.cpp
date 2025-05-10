@@ -5,7 +5,6 @@ namespace PicoGUI
     Loading::Loading(Draw *draw, uint16_t spinnerColor, uint16_t backgroundColor)
         : display(draw), spinnerColor(spinnerColor), backgroundColor(backgroundColor)
     {
-        Board board = display->getBoard();
         spinnerPosition = 0;
         timeElapsed = 0;
         timeStart = 0;

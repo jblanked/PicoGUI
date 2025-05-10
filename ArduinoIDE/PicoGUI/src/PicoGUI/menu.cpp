@@ -11,7 +11,7 @@ namespace PicoGUI
         uint16_t backgroundColor,
         uint16_t selectedColor,
         uint16_t borderColor,
-        uint16_t borderWidth)
+        uint16_t borderWidth) : title(title)
     {
         this->display = draw;
         this->textColor = textColor;
@@ -43,7 +43,7 @@ namespace PicoGUI
     void Menu::drawTitle()
     {
         display->clear(Vector(0, 20), Vector(display->getSize().x, 20), backgroundColor);
-        display->text(Vector(2, 2), "Menu", textColor, 4);
+        display->text(Vector(2, 2), title, textColor, 4);
     }
 
     void Menu::scrollDown()

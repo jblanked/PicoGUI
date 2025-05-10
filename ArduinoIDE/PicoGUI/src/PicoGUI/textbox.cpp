@@ -298,8 +298,6 @@ namespace PicoGUI
 
     void TextBox::setScrollBarPosition()
     {
-        float contentHeight = getTextHeight();
-        float viewHeight = size.y;
         Vector barSize = scrollBar->getSize();
         float barHeight = barSize.y;
         float barWidth = barSize.x;
@@ -316,7 +314,7 @@ namespace PicoGUI
         }
 
         // maximum vertical movement for scrollbar thumb
-        float maxOffset = viewHeight - barHeight - 2; // Account for padding
+        float maxOffset = size.y - barHeight - 2; // Account for padding
         float barOffsetY = scrollRatio * maxOffset;
 
         float barX = position.x + size.x - barWidth - 1; // 1 pixel padding

@@ -47,5 +47,7 @@ namespace PicoGUI
         //
         uint16_t textColor;       // Text color of the menu
         uint16_t backgroundColor; // Background color of the menu
+        //
+        const char *title; // Title of the menu
     };
 } // namespace PicoGUI
