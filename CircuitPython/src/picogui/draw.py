@@ -295,6 +295,9 @@ class Draw:
         except ValueError as e:
             print(f"Error loading bitmap from file: {e}")
             return False
+        except MemoryError as e:
+            print(f"{e}")
+            return False
 
     def image_bytearray(self, position: Vector, byte_array: bytearray, img_width: int):
         """Draw a byte array into the bitmap, optimized for memory usage."""
@@ -465,3 +468,12 @@ class Draw:
 
         # Increment index for next use
         self.current_text_index += 1
+
+    def tile_grid(self, position: Vector, tile_grid: TileGrid):
+        """Add a TileGrid to the display at the specified position."""
+        if not self.is_ready:
+            return
+
+        tile_grid.x = int(position.x)
+        tile_grid.y = int(position.y)
+        self.text_group.append(tile_grid)
