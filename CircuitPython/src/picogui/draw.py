@@ -296,7 +296,7 @@ class Draw:
             print(f"Error loading bitmap from file: {e}")
             return False
         except MemoryError as e:
-            print(f"{e}")
+            print(f"Not enough memory: {e}")
             return False
 
     def image_bytearray(self, position: Vector, byte_array: bytearray, img_width: int):
@@ -448,23 +448,31 @@ class Draw:
             if text_obj not in self.text_group:
                 self.text_group.append(text_obj)
         else:
-            # Create new text object only if needed
-            text_obj = Label(
-                FONT,
-                text=txt,
-                color=color,
-                x=int(position.x),
-                y=int(position.y),
-                scale=font,
-                line_spacing=spacing,
-            )
+            # search if any of the text from the label matches the text
+            for i in range(len(self.text_objects)):
+                if self.text_objects[i].text == txt:
+                    text_obj = self.text_objects[i]
+                    text_obj.x = int(position.x)
+                    text_obj.y = int(position.y)
+                    break
+            else:
+                # Create new text object only if needed
+                text_obj = Label(
+                    FONT,
+                    text=txt,
+                    color=color,
+                    x=int(position.x),
+                    y=int(position.y),
+                    scale=font,
+                    line_spacing=spacing,
+                )
 
-            # Add to our pool and the display group
-            self.text_objects.append(text_obj)
-            self.text_group.append(text_obj)
+                # Add to our pool and the display group
+                self.text_objects.append(text_obj)
+                self.text_group.append(text_obj)
 
-            # Force garbage collection after creating a new object
-            free()
+                # Force garbage collection after creating a new object
+                free()
 
         # Increment index for next use
         self.current_text_index += 1
@@ -473,7 +481,14 @@ class Draw:
         """Add a TileGrid to the display at the specified position."""
         if not self.is_ready:
             return
-
-        tile_grid.x = int(position.x)
-        tile_grid.y = int(position.y)
-        self.text_group.append(tile_grid)
+        if tile_grid not in self.text_group:
+            tile_grid.x = int(position.x)
+            tile_grid.y = int(position.y)
+            self.text_group.append(tile_grid)
+        else:
+            # find the tile_grid then change the position
+            for i in range(len(self.text_group)):
+                if self.text_group[i] == tile_grid:
+                    self.text_group[i].x = int(position.x)
+                    self.text_group[i].y = int(position.y)
+                    break
