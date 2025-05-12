@@ -389,22 +389,20 @@ class Draw:
         )  # Right line
 
     def rect_fill(self, position: Vector, size: Vector, color: int):
-        """Fill a rectangle with a color."""
+        """Fill a rectangle at (x, y) with width w and height h with the specified color."""
         if not self.is_ready:
             return
 
         pidx = self._color_to_palette_index(color)
 
-        # Pre-calculate bounds to avoid checks in the inner loop
-        x_start = max(0, position.x)
-        y_start = max(0, position.y)
-        x_end = min(self.size.x, position.x + size.x)
-        y_end = min(self.size.y, position.y + size.y)
+        x0 = max(0, int(position.x))
+        y0 = max(0, int(position.y))
+        x1 = min(self.size.x, int(position.x + size.x))
+        y1 = min(self.size.y, int(position.y + size.y))
 
-        # Direct memory access for better performance
-        for y in range(y_start, y_end):
-            for x in range(x_start, x_end):
-                self.display[int(x), int(y)] = pidx
+        for y in range(y0, y1):
+            for x in range(x0, x1):
+                self.display[x, y] = pidx
 
     def set_palette(self, index: int, color: int):
         """Set the color of a palette index."""
