@@ -129,7 +129,7 @@ class TextBox:
                     y_pos = (
                         self.position.y + 5 + (i * 12)
                     )  # Position based on line number within view
-                    self.scrollbar.display.text(
+                    self.scrollbar.display.text_multi(
                         Vector(self.position.x + 1, y_pos),
                         line_text,
                         self.foreground_color,

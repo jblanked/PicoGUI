@@ -389,20 +389,22 @@ class Draw:
         )  # Right line
 
     def rect_fill(self, position: Vector, size: Vector, color: int):
-        """Fill a rectangle at (x, y) with width w and height h with the specified color."""
+        """Fill a rectangle with a color."""
         if not self.is_ready:
             return
 
         pidx = self._color_to_palette_index(color)
 
-        x0 = max(0, int(position.x))
-        y0 = max(0, int(position.y))
-        x1 = min(self.size.x, int(position.x + size.x))
-        y1 = min(self.size.y, int(position.y + size.y))
+        # Pre-calculate bounds to avoid checks in the inner loop
+        x_start = max(0, position.x)
+        y_start = max(0, position.y)
+        x_end = min(self.size.x, position.x + size.x)
+        y_end = min(self.size.y, position.y + size.y)
 
-        for y in range(y0, y1):
-            for x in range(x0, x1):
-                self.display[x, y] = pidx
+        # Direct memory access for better performance
+        for y in range(y_start, y_end):
+            for x in range(x_start, x_end):
+                self.display[int(x), int(y)] = pidx
 
     def set_palette(self, index: int, color: int):
         """Set the color of a palette index."""
@@ -424,7 +426,7 @@ class Draw:
     def text(
         self,
         position: Vector,
-        txt: str,
+        text: str,
         color: int = 0xFFFFFF,
         font: int = 1,
         spacing: float = 1.00,  # default is 1.25 actually
@@ -437,27 +439,25 @@ class Draw:
         if self.current_text_index < len(self.text_objects):
             text_obj = self.text_objects[self.current_text_index]
             # Update existing text object properties
-            text_obj.text = txt
+            text_obj.text = text
             text_obj.color = color
             text_obj.x = int(position.x)
             text_obj.y = int(position.y)
 
-            # If the text object isn't already in the group, add it
-            if text_obj not in self.text_group:
-                self.text_group.append(text_obj)
         else:
             # search if any of the text from the label matches the text
-            for i in range(len(self.text_objects)):
-                if self.text_objects[i].text == txt:
-                    text_obj = self.text_objects[i]
-                    text_obj.x = int(position.x)
-                    text_obj.y = int(position.y)
+            found = False
+            for txt in self.text_objects:
+                if txt.text == text:
+                    txt.x = int(position.x)
+                    txt.y = int(position.y)
+                    found = True
                     break
-            else:
+            if not found:
                 # Create new text object only if needed
                 text_obj = Label(
                     FONT,
-                    text=txt,
+                    text=text,
                     color=color,
                     x=int(position.x),
                     y=int(position.y),
@@ -469,11 +469,130 @@ class Draw:
                 self.text_objects.append(text_obj)
                 self.text_group.append(text_obj)
 
+                # Increment index for next use
+                self.current_text_index += 1
+
                 # Force garbage collection after creating a new object
                 free()
 
-        # Increment index for next use
-        self.current_text_index += 1
+    def text_multi(
+        self,
+        position: Vector,
+        text: str,
+        color: int = 0xFFFFFF,
+        font: int = 1,
+        spacing: float = 1.00,  # default is 1.25 actually
+    ):
+        """Print a string at the specified position, with memory reuse and multi-line support."""
+        if not self.is_ready:
+            return
+
+        # If text contains newlines, split and render each line separately
+        if "\n" in text:
+            lines = text.split("\n")
+            line_height = FONT.get_glyph(ord("M")).height * font
+
+            # Add spacing between lines
+            line_spacing = int(line_height * spacing)
+
+            # Process each line separately
+            current_y = position.y
+            for line in lines:
+                if line.strip():  # Skip empty lines but preserve spacing
+                    # Try to find an existing text object with the same content
+                    text_obj = None
+
+                    # First try to reuse an existing object from the pool
+                    if self.current_text_index < len(self.text_objects):
+                        text_obj = self.text_objects[self.current_text_index]
+                        # Update properties
+                        text_obj.text = line
+                        text_obj.color = color
+                        text_obj.x = int(position.x)
+                        text_obj.y = int(current_y)
+
+                        # Make sure it's in the text_group
+                        if text_obj not in self.text_group:
+                            self.text_group.append(text_obj)
+
+                        self.current_text_index += 1
+                    else:
+                        # Search if there's any existing label with this text
+                        for idx, txt in enumerate(self.text_objects):
+                            if txt.text == line and txt not in self.text_group:
+                                txt.x = int(position.x)
+                                txt.y = int(current_y)
+                                txt.color = color
+                                self.text_group.append(txt)
+                                text_obj = txt
+                                break
+
+                        # If no existing object found, create a new one
+                        if text_obj is None:
+                            text_obj = Label(
+                                FONT,
+                                text=line,
+                                color=color,
+                                x=int(position.x),
+                                y=int(current_y),
+                                scale=font,
+                                line_spacing=spacing,
+                            )
+                            self.text_objects.append(text_obj)
+                            self.text_group.append(text_obj)
+                            self.current_text_index = len(self.text_objects)
+
+                            # Force garbage collection after creating a new object
+                            free()
+
+                current_y += line_spacing
+            return
+
+        # Handle single line text
+        text_obj = None
+
+        # Try to reuse an existing object first
+        if self.current_text_index < len(self.text_objects):
+            text_obj = self.text_objects[self.current_text_index]
+            # Update existing text object properties
+            text_obj.text = text
+            text_obj.color = color
+            text_obj.x = int(position.x)
+            text_obj.y = int(position.y)
+
+            # Make sure it's in the text_group
+            if text_obj not in self.text_group:
+                self.text_group.append(text_obj)
+
+            self.current_text_index += 1
+        else:
+            # Search if there's any existing label with this text
+            for idx, txt in enumerate(self.text_objects):
+                if txt.text == text and txt not in self.text_group:
+                    txt.x = int(position.x)
+                    txt.y = int(position.y)
+                    txt.color = color
+                    self.text_group.append(txt)
+                    text_obj = txt
+                    break
+
+            # If no existing object found, create a new one
+            if text_obj is None:
+                text_obj = Label(
+                    FONT,
+                    text=text,
+                    color=color,
+                    x=int(position.x),
+                    y=int(position.y),
+                    scale=font,
+                    line_spacing=spacing,
+                )
+                self.text_objects.append(text_obj)
+                self.text_group.append(text_obj)
+                self.current_text_index = len(self.text_objects)
+
+                # Force garbage collection after creating a new object
+                free()
 
     def tile_grid(self, position: Vector, tile_grid: TileGrid):
         """Add a TileGrid to the display at the specified position."""
@@ -485,8 +604,8 @@ class Draw:
             self.text_group.append(tile_grid)
         else:
             # find the tile_grid then change the position
-            for i in range(len(self.text_group)):
-                if self.text_group[i] == tile_grid:
-                    self.text_group[i].x = int(position.x)
-                    self.text_group[i].y = int(position.y)
+            for txt in self.text_objects:
+                if txt == tile_grid:
+                    txt.x = int(position.x)
+                    txt.y = int(position.y)
                     break
